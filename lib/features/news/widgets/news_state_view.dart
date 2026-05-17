@@ -6,7 +6,16 @@ class NewsLoadingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: CircularProgressIndicator());
+    return const Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(height: 12),
+          Text('加载中', style: TextStyle(fontSize: 16)),
+        ],
+      ),
+    );
   }
 }
 

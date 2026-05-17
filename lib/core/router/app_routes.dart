@@ -2,6 +2,11 @@
 class AppRoutes {
   const AppRoutes._();
 
+  /// 应用启动页。
+  static const home = '/';
+  // 个人中心页。
+  static const mine = '/mine';
+
   /// 新闻列表页真实路径。
   static const news = '/news';
 

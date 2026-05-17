@@ -1,6 +1,8 @@
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../features/main/pages/main_page.dart';
+import '../../features/mine/pages/mine_page.dart';
 import '../../features/news/pages/news_detail_page.dart';
 import '../../features/news/pages/news_list_page.dart';
 import '../../features/news/providers/news_detail_provider.dart';
@@ -19,9 +21,13 @@ part 'app_router.g.dart';
 )
 GoRouter appRouter(Ref ref) {
   return GoRouter(
-    // 应用启动后默认进入新闻列表页。
-    initialLocation: AppRoutes.news,
+    // 应用启动后默认进入聊天首页。
+    initialLocation: AppRoutes.mine,
     routes: [
+      // / -> 个人页
+      GoRoute(path: AppRoutes.mine, builder: (_, _) => const MinePage()),
+      // / -> 聊天首页
+      GoRoute(path: AppRoutes.home, builder: (_, _) => const MainPage()),
       // /news -> 新闻列表页
       GoRoute(path: AppRoutes.news, builder: (_, _) => const NewsListPage()),
       // /news/:id -> 新闻详情页
