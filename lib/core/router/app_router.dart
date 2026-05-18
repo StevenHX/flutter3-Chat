@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../features/contacts/pages/contacts_page.dart';
 import '../../features/main/pages/main_page.dart';
 import '../../features/mine/pages/mine_page.dart';
 import '../../features/news/pages/news_detail_page.dart';
@@ -26,16 +27,31 @@ GoRouter appRouter(Ref ref) {
     initialLocation: AppRoutes.home,
     routes: [
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) => MainShell(navigationShell: navigationShell),
+        builder: (context, state, navigationShell) =>
+            MainShell(navigationShell: navigationShell),
         branches: [
           StatefulShellBranch(
             routes: [
-              GoRoute(path: AppRoutes.home, builder: (_, _) => const MainPage()),
+              GoRoute(
+                path: AppRoutes.home,
+                builder: (_, _) => const MainPage(),
+              ),
             ],
           ),
           StatefulShellBranch(
             routes: [
-              GoRoute(path: AppRoutes.mine, builder: (_, _) => const MinePage()),
+              GoRoute(
+                path: AppRoutes.contacts,
+                builder: (_, _) => const ContactsPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.mine,
+                builder: (_, _) => const MinePage(),
+              ),
             ],
           ),
         ],
@@ -73,8 +89,12 @@ class MainShell extends StatelessWidget {
             label: '聊天',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: '我',
+            icon: Icon(Icons.contacts_outlined),
+            label: '联系人',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline), 
+            label: '我'
           ),
         ],
       ),

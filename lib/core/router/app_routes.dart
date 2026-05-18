@@ -7,6 +7,9 @@ class AppRoutes {
   // 个人中心页。
   static const mine = '/mine';
 
+  /// 联系人页。
+  static const contacts = '/contacts';
+
   /// 新闻列表页真实路径。
   static const news = '/news';
 
