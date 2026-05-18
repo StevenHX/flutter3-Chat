@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -22,12 +23,23 @@ part 'app_router.g.dart';
 GoRouter appRouter(Ref ref) {
   return GoRouter(
     // 应用启动后默认进入聊天首页。
-    initialLocation: AppRoutes.mine,
+    initialLocation: AppRoutes.home,
     routes: [
-      // / -> 个人页
-      GoRoute(path: AppRoutes.mine, builder: (_, _) => const MinePage()),
-      // / -> 聊天首页
-      GoRoute(path: AppRoutes.home, builder: (_, _) => const MainPage()),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => MainShell(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(path: AppRoutes.home, builder: (_, _) => const MainPage()),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(path: AppRoutes.mine, builder: (_, _) => const MinePage()),
+            ],
+          ),
+        ],
+      ),
       // /news -> 新闻列表页
       GoRoute(path: AppRoutes.news, builder: (_, _) => const NewsListPage()),
       // /news/:id -> 新闻详情页
@@ -41,4 +53,31 @@ GoRouter appRouter(Ref ref) {
       ),
     ],
   );
+}
+
+class MainShell extends StatelessWidget {
+  final StatefulNavigationShell navigationShell;
+
+  const MainShell({required this.navigationShell, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: navigationShell,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: navigationShell.currentIndex,
+        onTap: navigationShell.goBranch,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat_bubble_outline),
+            label: '聊天',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: '我',
+          ),
+        ],
+      ),
+    );
+  }
 }

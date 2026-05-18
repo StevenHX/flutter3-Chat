@@ -193,7 +193,7 @@ class MinePage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
+                margin: const EdgeInsets.symmetric(horizontal: 0),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(24),

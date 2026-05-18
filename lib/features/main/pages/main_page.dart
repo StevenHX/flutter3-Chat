@@ -11,7 +11,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int _selectedIndex = 0;
   late final ScrollController _scrollController;
   bool _isLoadingMore = false;
   // Pagination simulation
@@ -69,12 +68,6 @@ class _MainPageState extends State<MainPage> {
       _chatItems.addAll(page.items);
       _isLoadingMore = false;
       _hasMore = _chatItems.length < page.total;
-    });
-  }
-
-  void _onTapNavItem(int index) {
-    setState(() {
-      _selectedIndex = index;
     });
   }
 
@@ -169,6 +162,7 @@ class _MainPageState extends State<MainPage> {
                           ),
                         );
                       }
+                      return const SizedBox.shrink();
                     },
                   ),
                 ),
@@ -176,21 +170,6 @@ class _MainPageState extends State<MainPage> {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onTapNavItem,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble_outline),
-            label: '聊天',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.supervisor_account_outlined),
-            label: '通讯录',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: '我'),
-        ],
       ),
     );
   }
