@@ -1,4 +1,7 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../core/router/app_routes.dart';
 
 class MinePage extends StatelessWidget {
   const MinePage({super.key});
@@ -258,6 +261,9 @@ class MinePage extends StatelessWidget {
                       ScaffoldMessenger.of(
                         context,
                       ).showSnackBar(const SnackBar(content: Text('退出登录')));
+                      context.push(
+                          AppRoutes.login,
+                      );
                     },
                     child: const Text(
                       '退出登录',

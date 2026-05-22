@@ -6,6 +6,8 @@ class AppRoutes {
   static const home = '/';
   // 个人中心页。
   static const mine = '/mine';
+  // 登录页。
+  static const login = '/login';
 
   /// 联系人页。
   static const contacts = '/contacts';

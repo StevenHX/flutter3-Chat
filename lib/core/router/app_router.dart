@@ -11,6 +11,8 @@ import '../../features/news/providers/news_detail_provider.dart';
 import '../../features/news/providers/news_list_provider.dart';
 import 'app_routes.dart';
 
+import '../../features/login/screens/login_screen.dart';
+
 // 这一行必须写，build_runner 会根据它生成 app_router.g.dart。
 part 'app_router.g.dart';
 
@@ -26,6 +28,10 @@ GoRouter appRouter(Ref ref) {
     // 应用启动后默认进入聊天首页。
     initialLocation: AppRoutes.home,
     routes: [
+      GoRoute(
+        path: AppRoutes.login,
+        builder: (context, state) => const LoginScreen(),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
             MainShell(navigationShell: navigationShell),
