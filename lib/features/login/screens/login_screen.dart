@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../shared/widgets/index.dart';
+import '../../../shared/utils/index.dart';
 import '../providers/login_provider.dart';
 import '../widgets/index.dart';
 
@@ -46,42 +48,10 @@ class LoginScreen extends ConsumerWidget {
               const SizedBox(height: 28),
               // Error message (if any)
               if (formState.error != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFEBEE),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: const Color(0xFFE74C3C),
-                        width: 1,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.error_outline,
-                          color: Color(0xFFE74C3C),
-                          size: 16,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            formState.error!,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFFE74C3C),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                ErrorMessage(message: formState.error!),
               // Sign in button
-              SignInButton(
+              PrimaryButton(
+                text: 'Sign In',
                 onPressed: () {
                   _handleSignIn(context, ref, formState);
                 },
@@ -92,33 +62,7 @@ class LoginScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 28),
               // Divider with text
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 1,
-                      color: const Color(0xFFE5E5E5),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      'or continue with',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: const Color(0xFF999999),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      height: 1,
-                      color: const Color(0xFFE5E5E5),
-                    ),
-                  ),
-                ],
-              ),
+              const OrDivider(),
               const SizedBox(height: 20),
               // Social login buttons
               SocialLoginButtons(
@@ -159,13 +103,13 @@ class LoginScreen extends ConsumerWidget {
     final formNotifier = ref.read(loginFormProvider.notifier);
     
     // Validate email
-    if (!_isValidEmail(formState.email)) {
+    if (!FormValidators.isValidEmail(formState.email)) {
       formNotifier.setError('Please enter a valid email address');
       return;
     }
 
     // Validate password
-    if (formState.password.length < 6) {
+    if (!FormValidators.isValidPasswordLength(formState.password)) {
       formNotifier.setError('Password must be at least 6 characters');
       return;
     }
@@ -218,11 +162,4 @@ class LoginScreen extends ConsumerWidget {
     );
   }
 
-  /// 验证邮箱格式
-  bool _isValidEmail(String email) {
-    final emailRegex = RegExp(
-      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-    );
-    return emailRegex.hasMatch(email);
-  }
 }
