@@ -8,6 +8,8 @@ class AppRoutes {
   static const mine = '/mine';
   // 登录页。
   static const login = '/login';
+  // 注册页。
+  static const signup = '/signup';
 
   /// 联系人页。
   static const contacts = '/contacts';

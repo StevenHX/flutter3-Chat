@@ -12,6 +12,7 @@ import '../../features/news/providers/news_list_provider.dart';
 import 'app_routes.dart';
 
 import '../../features/login/screens/login_screen.dart';
+import '../../features/signup/screens/signup_screen.dart';
 
 // 这一行必须写，build_runner 会根据它生成 app_router.g.dart。
 part 'app_router.g.dart';
@@ -31,6 +32,10 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.login,
         builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.signup,
+        builder: (context, state) => const SignupScreen(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>

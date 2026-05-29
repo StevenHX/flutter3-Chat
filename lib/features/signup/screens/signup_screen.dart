@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
-import '../providers/login_provider.dart';
+import '../providers/signup_provider.dart';
 import '../widgets/index.dart';
+import '../../login/widgets/index.dart';
 
-/// 登录屏幕
-class LoginScreen extends ConsumerWidget {
-  const LoginScreen({super.key});
+/// 注册屏幕
+class SignupScreen extends ConsumerWidget {
+  const SignupScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final formState = ref.watch(loginFormProvider);
-    final formNotifier = ref.read(loginFormProvider.notifier);
+    final formState = ref.watch(signupFormProvider);
+    final formNotifier = ref.read(signupFormProvider.notifier);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -24,8 +24,18 @@ class LoginScreen extends ConsumerWidget {
             children: [
               const SizedBox(height: 16),
               // Header with logo and title
-              const LoginHeader(),
+              const LoginHeader(
+                title: 'Create Account',
+                subtitle: 'Please fill in the form to continue',
+              ),
               const SizedBox(height: 40),
+              // Name input
+              NameInputField(
+                value: formState.name,
+                onChanged: (name) => formNotifier.updateName(name),
+                errorText: null,
+              ),
+              const SizedBox(height: 20),
               // Email input
               EmailInputField(
                 value: formState.email,
@@ -36,12 +46,33 @@ class LoginScreen extends ConsumerWidget {
               // Password input
               PasswordInputField(
                 value: formState.password,
-                onChanged: (password) =>
-                    formNotifier.updatePassword(password),
+                onChanged: (password) => formNotifier.updatePassword(password),
                 isPasswordVisible: formState.isPasswordVisible,
-                onVisibilityToggle: () =>
-                    formNotifier.togglePasswordVisibility(),
+                onVisibilityToggle: () => formNotifier.togglePasswordVisibility(),
                 errorText: null,
+              ),
+              const SizedBox(height: 20),
+              // Confirm Password input
+              ConfirmPasswordInputField(
+                value: formState.confirmPassword,
+                onChanged: (confirmPassword) =>
+                    formNotifier.updateConfirmPassword(confirmPassword),
+                isPasswordVisible: formState.isConfirmPasswordVisible,
+                onVisibilityToggle: () =>
+                    formNotifier.toggleConfirmPasswordVisibility(),
+                errorText: null,
+              ),
+              const SizedBox(height: 16),
+              // Terms agreement
+              TermsAgreementCheckbox(
+                value: formState.agreeToTerms,
+                onChanged: (agree) => formNotifier.toggleAgreeToTerms(),
+                onTermsPressed: () {
+                  _handleTermsPressed(context);
+                },
+                onPrivacyPressed: () {
+                  _handlePrivacyPressed(context);
+                },
               ),
               const SizedBox(height: 28),
               // Error message (if any)
@@ -80,15 +111,13 @@ class LoginScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-              // Sign in button
-              SignInButton(
+              // Sign Up button
+              SignUpButton(
                 onPressed: () {
-                  _handleSignIn(context, ref, formState);
+                  _handleSignUp(context, ref, formState);
                 },
                 isLoading: formState.isLoading,
-                isEnabled: formState.email.isNotEmpty &&
-                    formState.password.isNotEmpty &&
-                    !formState.isLoading,
+                isEnabled: _isFormValid(formState),
               ),
               const SizedBox(height: 28),
               // Divider with text
@@ -123,25 +152,18 @@ class LoginScreen extends ConsumerWidget {
               // Social login buttons
               SocialLoginButtons(
                 onEmailPressed: () {
-                  _handleSocialLogin(context, 'Email');
+                  _handleSocialSignUp(context, 'Email');
                 },
                 onFacebookPressed: () {
-                  _handleSocialLogin(context, 'Facebook');
+                  _handleSocialSignUp(context, 'Facebook');
                 },
                 onLinkedInPressed: () {
-                  _handleSocialLogin(context, 'LinkedIn');
+                  _handleSocialSignUp(context, 'LinkedIn');
                 },
               ),
               const SizedBox(height: 32),
-              // Auth links (Sign up & Forgot password)
-              AuthLinks(
-                onSignUpPressed: () {
-                  _handleSignUp(context);
-                },
-                onForgotPasswordPressed: () {
-                  _handleForgotPassword(context);
-                },
-              ),
+              // Auth links (Sign in)
+              _buildSignInLink(context),
               const SizedBox(height: 24),
             ],
           ),
@@ -150,14 +172,30 @@ class LoginScreen extends ConsumerWidget {
     );
   }
 
-  /// 处理登录
-  void _handleSignIn(
+  /// 检查表单是否有效
+  bool _isFormValid(SignupFormState formState) {
+    return formState.name.isNotEmpty &&
+        formState.email.isNotEmpty &&
+        formState.password.isNotEmpty &&
+        formState.confirmPassword.isNotEmpty &&
+        formState.agreeToTerms &&
+        !formState.isLoading;
+  }
+
+  /// 处理注册
+  void _handleSignUp(
     BuildContext context,
     WidgetRef ref,
-    LoginFormState formState,
+    SignupFormState formState,
   ) {
-    final formNotifier = ref.read(loginFormProvider.notifier);
-    
+    final formNotifier = ref.read(signupFormProvider.notifier);
+
+    // Validate name
+    if (formState.name.trim().isEmpty) {
+      formNotifier.setError('Please enter your full name');
+      return;
+    }
+
     // Validate email
     if (!_isValidEmail(formState.email)) {
       formNotifier.setError('Please enter a valid email address');
@@ -170,52 +208,104 @@ class LoginScreen extends ConsumerWidget {
       return;
     }
 
-    // Simulate login process
+    // Validate confirm password
+    if (formState.password != formState.confirmPassword) {
+      formNotifier.setError('Passwords do not match');
+      return;
+    }
+
+    // Simulate signup process
     formNotifier.setLoading(true);
-    
+
     Future.delayed(const Duration(seconds: 2), () {
       // In real app, call API here
       formNotifier.setLoading(false);
-      
-      // Simulate successful login
+
+      // Simulate successful signup
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Login successful!'),
+          content: Text('Account created successfully!'),
           backgroundColor: Color(0xFF4CAF50),
         ),
       );
-      
+
       // Reset form
       formNotifier.reset();
-      
-      // Navigate to home (implement with your router)
-      // ref.read(appRouterProvider).go('/home');
+
+      // Navigate back to login
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
     });
   }
 
-  /// 处理社交登录
-  void _handleSocialLogin(BuildContext context, String provider) {
+  /// 处理社交注册
+  void _handleSocialSignUp(BuildContext context, String provider) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Logging in with $provider...'),
+        content: Text('Signing up with $provider...'),
         backgroundColor: const Color(0xFFFF6B35),
       ),
     );
   }
 
-  /// 处理注册
-  void _handleSignUp(BuildContext context) {
-    GoRouter.of(context).push('/signup');
-  }
-
-  /// 处理忘记密码
-  void _handleForgotPassword(BuildContext context) {
+  /// 处理条款点击
+  void _handleTermsPressed(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Navigate to Forgot Password screen'),
-        backgroundColor: Color(0xFFFF6B35),
+        content: Text('Open Terms of Service'),
+        backgroundColor: Color(0xFF2196F3),
       ),
     );
+  }
+
+  /// 处理隐私政策点击
+  void _handlePrivacyPressed(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Open Privacy Policy'),
+        backgroundColor: Color(0xFF2196F3),
+      ),
+    );
+  }
+
+  /// 构建返回登录链接
+  Widget _buildSignInLink(BuildContext context) {
+    return Center(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'Already have an account? ',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: Color(0xFF666666),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              _handleSignInPressed(context);
+            },
+            child: const Text(
+              'Sign In',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFFFF6B35),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 处理登录点击
+  void _handleSignInPressed(BuildContext context) {
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
   }
 
   /// 验证邮箱格式
