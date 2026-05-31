@@ -261,9 +261,12 @@ class MinePage extends StatelessWidget {
                       ScaffoldMessenger.of(
                         context,
                       ).showSnackBar(const SnackBar(content: Text('退出登录')));
-                      context.push(
-                          AppRoutes.login,
-                      );
+                      // context.push(
+                      //     AppRoutes.login,
+                      // );
+                     context.push(
+                      AppRoutes.assessment
+                     );
                     },
                     child: const Text(
                       '退出登录',

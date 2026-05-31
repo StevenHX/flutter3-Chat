@@ -20,6 +20,9 @@ class AppRoutes {
   /// 新闻详情页路由模板，`:id` 是路径参数占位符。
   static const newsDetail = '/news/:id';
 
+  /// 评估页。
+  static const assessment = '/assessment';
+
   /// 根据新闻 id 生成真正用于跳转的路径。
   static String newsDetailPath(String id) => '/news/$id';
 }

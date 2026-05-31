@@ -13,6 +13,7 @@ import 'app_routes.dart';
 
 import '../../features/login/screens/login_screen.dart';
 import '../../features/signup/screens/signup_screen.dart';
+import '../../features/assessment/pages/assessment_page.dart';
 
 // 这一行必须写，build_runner 会根据它生成 app_router.g.dart。
 part 'app_router.g.dart';
@@ -77,6 +78,11 @@ GoRouter appRouter(Ref ref) {
           final id = state.pathParameters['id']!;
           return NewsDetailPage(newsId: id);
         },
+      ),
+      // /assessment -> 评估页
+      GoRoute(
+        path: AppRoutes.assessment,
+        builder: (_, _) => const AssessmentPage(),
       ),
     ],
   );
